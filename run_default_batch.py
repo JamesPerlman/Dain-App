@@ -31,7 +31,7 @@ def get_output_video_path(
     output_dir_path: Path,
     slow_factor: int,
     output_fps_str: str,
-) -> str:
+) -> Path:
     output_fps_n, output_fps_d = [int(n) for n in output_fps_str.split("/")]
     output_fps_int = int(output_fps_n / output_fps_d)
     return output_dir_path / f"{input_file_path.stem}-{slow_factor}x-{output_fps_int}fps.mp4"
@@ -44,19 +44,7 @@ for file_path in input_path.iterdir():
 
     if not interp in [2, 4, 8]:
         interp = 8
-
-    print(f"Interpolating {file_path.name} at {interp}x")
-
-    os.system(f" \
-        python my_design.py -cli  \
-            --input {file_path} \
-            --output {dain_workdir} \
-            --interpolations {interp} \
-    ")
-
-    # we need to correct the framerate and move it to the output folder
-    interpolated_video_path = list((dain_workdir / "output_videos").iterdir())[0]
-    
+       
     output_fps_str = get_output_video_fps(
         input_file_path=file_path,
         slow_factor=interp
@@ -68,6 +56,22 @@ for file_path in input_path.iterdir():
         slow_factor=interp,
         output_fps_str=output_fps_str,
     )
+
+    if output_video_path.exists():
+        print(f"{file_path} already exists! Skipping...")
+        continue
+    
+    print(f"Interpolating {file_path.name} at {interp}x")
+
+    os.system(f" \
+        python my_design.py -cli  \
+            --input {file_path} \
+            --output {dain_workdir} \
+            --interpolations {interp} \
+    ")
+
+    # we need to correct the framerate and move it to the output folder
+    interpolated_video_path = list((dain_workdir / "output_videos").iterdir())[0]
     
     # correct framerate
     os.system(f"ffmpeg -i {interpolated_video_path} -filter:v fps={output_fps_str} {output_video_path}")
