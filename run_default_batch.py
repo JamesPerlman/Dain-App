@@ -69,6 +69,8 @@ for file_path in input_path.iterdir():
             --input \"{file_path}\" \
             --output \"{dain_workdir}\" \
             --interpolations {interp} \
+            --half 1 \
+            --use_benchmark 0 \
     ")
 
     # we need to correct the framerate and move it to the output folder
