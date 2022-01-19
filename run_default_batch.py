@@ -17,7 +17,8 @@ def get_output_video_fps(
     input_file_path: Path,
     slow_factor: int,
 ) -> str:
-    input_fps_str = sp.getoutput(f"ffprobe -v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate {input_file_path}")
+    input_fps_str = sp.getoutput(f"ffprobe -v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate \"{input_file_path}\"")
+
     input_fps_n, input_fps_d = [int(n) for n in input_fps_str.split("/")]
     
     output_fps_n = input_fps_n * slow_factor
@@ -65,8 +66,8 @@ for file_path in input_path.iterdir():
 
     os.system(f" \
         python my_design.py -cli  \
-            --input {file_path} \
-            --output {dain_workdir} \
+            --input \"{file_path}\" \
+            --output \"{dain_workdir}\" \
             --interpolations {interp} \
     ")
 
@@ -74,7 +75,7 @@ for file_path in input_path.iterdir():
     interpolated_video_path = list((dain_workdir / "output_videos").iterdir())[0]
     
     # correct framerate
-    os.system(f"ffmpeg -i {interpolated_video_path} -filter:v fps={output_fps_str} {output_video_path}")
+    os.system(f"ffmpeg -i \"{interpolated_video_path}\" -filter:v fps={output_fps_str} \"{output_video_path}\"")
 
     # clean up
     shutil.rmtree(dain_workdir, ignore_errors=True)
