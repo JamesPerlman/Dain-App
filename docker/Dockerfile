@@ -42,8 +42,6 @@ RUN apt-get update -q && \
 
 ENV PATH /opt/conda/bin:$PATH
 
-CMD [ "/bin/bash" ]
-
 # Leave these args here to better use the Docker build cache
 ARG CONDA_VERSION=latest
 
