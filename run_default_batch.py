@@ -10,6 +10,8 @@ output_path = Path('./content/output')
 dain_workdir = Path('./workdir')
 dain_workdir.mkdir(exist_ok=True)
 
+frame_batch = 10
+
 def get_first(list, default = None):
     return list[0] if list else default
 
@@ -37,6 +39,32 @@ def get_output_video_path(
     output_fps_int = int(output_fps_n / output_fps_d)
     return output_dir_path / f"{input_file_path.stem}-{slow_factor}x-{output_fps_int}fps.mp4"
 
+
+def dain_interpolate(
+    input_file_path: Path,
+    output_file_path: Path,
+    interp: int,
+    output_fps: str,
+):
+    print(f"Interpolating {file_path.name} at {interp}x")
+
+    os.system(f" \
+        python my_design.py -cli  \
+            --input \"{input_file_path}\" \
+            --output \"{dain_workdir}\" \
+            --interpolations {interp} \
+            --half 1 \
+            --use_benchmark 0 \
+    ")
+    
+    # we need to correct the framerate and move it to the output folder
+    interpolated_video_path = list((dain_workdir / "output_videos").iterdir())[0]
+    
+    # correct framerate
+    os.system(f"ffmpeg -i \"{interpolated_video_path}\" -filter:v fps={output_fps} \"{output_file_path}\"")
+
+# ffmpeg -i content/input/ski_grass-8FPS.mov -vf select="between(n\,10\,20),setpts=PTS-STARTPTS" content/output/test_0002.mp4
+
 for file_path in input_path.iterdir():
 
     # get iteration count by filename
@@ -62,22 +90,14 @@ for file_path in input_path.iterdir():
         print(f"{file_path} already exists! Skipping...")
         continue
     
-    print(f"Interpolating {file_path.name} at {interp}x")
+    # split clip into groups of frames, of size frame_batch
 
-    os.system(f" \
-        python my_design.py -cli  \
-            --input \"{file_path}\" \
-            --output \"{dain_workdir}\" \
-            --interpolations {interp} \
-            --half 1 \
-            --use_benchmark 0 \
-    ")
-
-    # we need to correct the framerate and move it to the output folder
-    interpolated_video_path = list((dain_workdir / "output_videos").iterdir())[0]
-    
-    # correct framerate
-    os.system(f"ffmpeg -i \"{interpolated_video_path}\" -filter:v fps={output_fps_str} \"{output_video_path}\"")
+    run_dain(
+        input_file_path=file_path,
+        output_file_path=output_video_path,
+        interp=interp,
+        output_fps=output_fps_str,
+    )
 
     # clean up
     shutil.rmtree(dain_workdir, ignore_errors=True)

@@ -21,11 +21,13 @@ if [ -z "${OUTPUT_PATH}" ]; then
     exit 1
 fi
 
+mkdir -p "${OUTPUT_PATH}"
+
 WORKDIR=/usr/local/dain-app
 
 docker run -it \
-    -v ${INPUT_PATH}:${WORKDIR}/content/input \
-    -v ${OUTPUT_PATH}:${WORKDIR}/content/output \
+    -v "${INPUT_PATH}":"${WORKDIR}/content/input" \
+    -v "${OUTPUT_PATH}":"${WORKDIR}/content/output" \
     --gpus all \
     --rm \
     dain-app \
