@@ -15,11 +15,31 @@ frame_batch = 10
 def get_first(list, default = None):
     return list[0] if list else default
 
+def get_video_frame_count(
+    video_path: Path
+) -> int:
+    frame_count = sp.getoutput(f" \
+        ffprobe \
+            -v error \
+            -select_streams v:0 \
+            -count_frames \
+            -show_entries stream=nb_read_frames \
+            -print_format default=nokey=1:noprint_wrappers=1 \
+            \"{video_path}\" \
+    ")
+    return int(frame_count)
+
 def get_output_video_fps(
     input_file_path: Path,
     slow_factor: int,
 ) -> str:
-    input_fps_str = sp.getoutput(f"ffprobe -v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate \"{input_file_path}\"")
+    input_fps_str = sp.getoutput(f" \
+        ffprobe \
+            -v 0 \
+            -of csv=p=0 \
+            -select_streams v:0 \
+            -show_entries stream=r_frame_rate \"{input_file_path}\" \
+    ")
 
     input_fps_n, input_fps_d = [int(n) for n in input_fps_str.split("/")]
     
@@ -27,7 +47,6 @@ def get_output_video_fps(
     output_fps_d = input_fps_d
 
     return f"{output_fps_n}/{input_fps_d}"
-
 
 def get_output_video_path(
     input_file_path: Path,
