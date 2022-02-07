@@ -209,8 +209,7 @@ for file_path in input_path.iterdir():
                 -c copy \
                 \"{output_video_path}\" \
         ")
-
-        exit()
+        
         # nuke tmp dir
         shutil.rmtree(tmp_work_dir, ignore_errors=True)
 
