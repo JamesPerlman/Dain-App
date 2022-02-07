@@ -1,2 +1,2 @@
-INPUT="/mnt/e/Dropbox/for jperl Feb 2"
+INPUT="/mnt/e/Dropbox/hok"
 ./run.sh -i "${INPUT}" -o "${INPUT}-out"
