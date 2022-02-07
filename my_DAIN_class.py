@@ -964,6 +964,14 @@ class DainClass():
     self.LogPrint("Finished PNG frames extraction!")
 
   def StepRenderInterpolation(self, myRenderData):
+    loops = 3
+    if myRenderData.framerateConf == 2:
+      loops = 1
+    if myRenderData.framerateConf == 4:
+      loops = 2
+    if myRenderData.framerateConf == 8:
+      loops = 3
+      
     self.LogPrint("Starting Interpolation!")
 
     files = self._make_video_dataset(self.originalFrames)
@@ -1044,13 +1052,6 @@ class DainClass():
         qtList.set_postfix(file=str(i-1) + " Jumping intepolation", refresh=False)
         self.LogPrint("\n" + str(i-1) + " Jumping intepolation")
       else:
-
-        if myRenderData.framerateConf == 2:
-          loops = 1
-        if myRenderData.framerateConf == 4:
-          loops = 2
-        if myRenderData.framerateConf == 8:
-          loops = 3
 
         
         if myRenderData.interpolationMethod == 2 :

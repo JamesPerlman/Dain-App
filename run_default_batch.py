@@ -10,7 +10,7 @@ output_path = Path('./content/output')
 dain_workdir = Path('./workdir')
 dain_workdir.mkdir(exist_ok=True)
 
-frame_batch_size = 30
+frame_batch_size = 10
 
 def get_first(list, default = None):
     return list[0] if list else default
