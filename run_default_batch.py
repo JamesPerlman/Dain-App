@@ -110,7 +110,7 @@ for file_path in input_path.iterdir():
 
     # get iteration count by filename
     # 2x_foobar.mov will interpolate 2x
-    interp = int(get_first(re.match("^(\d+(?=x))", file_path.stem), default=4))
+    interp = int(get_first(re.match("^(\d+(?=x))", file_path.stem), default=8))
 
     if not interp in [2, 4, 8]:
         interp = 8
