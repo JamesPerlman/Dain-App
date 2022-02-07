@@ -1,3 +1,6 @@
+workdir/
+content/
+
 # Ignore Git here
 .git
 
